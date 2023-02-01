@@ -1,3 +1,5 @@
+from datetime import date
+
 # Dictionnaire contenant les entreprises de la façon suivante: (entreprises={id:Entreprise(...), id2:Entreprise(...), ...})
 entreprises = {}
 
@@ -27,13 +29,18 @@ class Entreprise:
     def add_employee(self, employee_id, name, birtday, entry_date, end_date):
         self.employees[employee_id] = Employe(name, birtday, entry_date, end_date)
 
+def convert_date(date_string):
+    if date_string == "null":
+        return None
+    return date(int(date_string.split("-")[0]), int(date_string.split("-")[1]), int(date_string.split("-")[2]))
+
 #Fonction qui récupère les informations sur le temps partiel d'un employé
 def get_part_time(line, entreprise_id, employee_id):
     string = line.split(":")[1].strip()
     start_date = string.split(",")[0].strip()
     end_date = string.split(",")[1].strip()
     coefficient = string.split(",")[2].strip()
-    entreprises[entreprise_id].employees[employee_id].add_part_time(start_date, end_date, coefficient)
+    entreprises[entreprise_id].employees[employee_id].add_part_time(convert_date(start_date), convert_date(end_date), coefficient)
 
 #Fonction qui récupère les informations d'un employé
 def get_employees(line, entreprise_id):
@@ -43,7 +50,7 @@ def get_employees(line, entreprise_id):
     birthday = string.split(",")[2].strip()
     entry_date = string.split(",")[3].strip()
     end_date = string.split(",")[4].strip()
-    entreprises[entreprise_id].add_employee(employee_id, name, birthday, entry_date, end_date)
+    entreprises[entreprise_id].add_employee(employee_id, name, convert_date(birthday), convert_date(entry_date), convert_date(end_date))
     return employee_id
 
 #Fonction qui récupère les informations d'une entreprise
