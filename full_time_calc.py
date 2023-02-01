@@ -1,12 +1,3 @@
-from datetime import date, timedelta
-
-periodes_temps_partiel = [    
-    (date(2019, 6, 16), #date debut periode temps partiel
-    date(2019, 12, 21), #date fin periode temps partiel
-    0.8),] #coefficient temps partiel
-date_entree = date(2017, 1, 1) #date d'entrée dans l'entreprise
-date_sortie = date(2019, 12, 21) #date de sortie de l'entreprise
-date_input = date(2019, 12, 28) #date de calcul
 
 # Fonction qui calcule le nombre de jours entre deux dates
 def nb_jours(date1, date2) :
@@ -46,10 +37,3 @@ def coefficients_equivalent_temps_plein(periodes_temps_partiel, date_entree, dat
             else :
                 coef.append(1 / coef_temps_partiel)
     return coef
-
-def main() :
-    coefficients = coefficients_equivalent_temps_plein(periodes_temps_partiel, date_entree, date_sortie, date_input)
-    print(coefficients)
-
-if __name__ == "__main__" :
-    main()

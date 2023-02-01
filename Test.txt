@@ -1,0 +1,8 @@
+entreprise: 1, Michel & Co.
+salarié: 1, Michel 0, 1942-07-07, 1969-01-01, 2020-02-02
+temps partiel: 1980-01-01, 2019-08-10, 0.9
+temps partiel: 2019-08-11, 2020-02-02, 0.7
+salarié: 2, Michel 1, 1989-02-14, 2013-08-21, null
+temps partiel: 2013-08-21, null, 0.5
+
+entreprise: 2, Michel Corp.
