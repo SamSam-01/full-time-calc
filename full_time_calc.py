@@ -33,19 +33,12 @@ def put_in_list(coef_list, start_date, end_date, coef, last_coef, last_end, nb) 
             coef = last_coef
         return last_end
 
-# Fonction qui retoure une liste de 12 coefficients de temps de travail pour ramener au temps plein les périodes de temps partiel (1 = temps plein, O.8 = temps partiel à 80%) calcul défini par temps plein = temps plein / temps partiel
-def coefficients_equivalent_temps_plein(periodes_temps_partiel, date_entree, date_sortie, date_input) :
+# Fonction qui calcule les coefficients et qui retourne la liste des 12 coefficients (1/pourcentage travaillé -> ex: 1/0.8)
+def calc_coef(periodes_temps_partiel, limit_date, date_sortie):
     coef_list = []
-
-    last_end = date_entree
+    last_end = limit_date
     last_coef = 1
-    if (date_sortie == None) :
-        date_sortie = date_input
-    if (pourc_mois(date_sortie) != 0) :
-        date_sortie = date_sortie.replace(month = date_sortie.month-1, day = 1)
-    limit_date = date_sortie.replace(year = date_sortie.year - 1)
-    if (date_entree < limit_date) :
-        date_entree = limit_date
+
     if (periodes_temps_partiel == None) :
         return [1 for i in range(0, 12)]
     for part_time in periodes_temps_partiel:
@@ -53,7 +46,7 @@ def coefficients_equivalent_temps_plein(periodes_temps_partiel, date_entree, dat
         end = part_time[1]
         coef = part_time[2]
         if (end == None) :
-            end = date_input
+            end = date_sortie
         if (end < limit_date):
             continue
         if (nb_mois(start, end) < 12) :
@@ -69,3 +62,14 @@ def coefficients_equivalent_temps_plein(periodes_temps_partiel, date_entree, dat
             for i in range(0, 12 - len(coef_list)) :
                 coef_list.insert(0, 1)
     return coef_list
+
+# Fonction qui initialise les variables qui vont servir à récupérer les coefficients
+def coefficients_equivalent_temps_plein(periodes_temps_partiel, date_entree, date_sortie, date_input) :
+    if (date_sortie == None) :
+        date_sortie = date_input
+    if (pourc_mois(date_sortie) != 0) :
+        date_sortie = date_sortie.replace(month = date_sortie.month-1, day = 1)
+    limit_date = date_sortie.replace(year = date_sortie.year - 1)
+    if (date_entree < limit_date) :
+        date_entree = limit_date
+    return calc_coef(periodes_temps_partiel, limit_date, date_sortie)
