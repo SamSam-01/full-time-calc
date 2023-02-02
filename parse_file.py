@@ -1,4 +1,5 @@
 from datetime import date
+from full_time_calc import coefficients_equivalent_temps_plein
 
 # Dictionnaire contenant les entreprises de la façon suivante: (entreprises={id:Entreprise(...), id2:Entreprise(...), ...})
 entreprises = {}
@@ -18,8 +19,11 @@ class Employe:
         self.entry_date = entry_date
         self.end_date = end_date
         self.part_time = []
+        self.list_coefficients = []
     def add_part_time(self, start_date, end_date, coefficient):
         self.part_time.append(PartTime(start_date, end_date, coefficient))
+    def add_coefficients(self, list_coefficients):
+        self.list_coefficients = list_coefficients
 
 #Class contenant les informations sur l'entreprise
 class Entreprise:
@@ -40,7 +44,7 @@ def get_part_time(line, entreprise_id, employee_id):
     start_date = string.split(",")[0].strip()
     end_date = string.split(",")[1].strip()
     coefficient = string.split(",")[2].strip()
-    entreprises[entreprise_id].employees[employee_id].add_part_time(convert_date(start_date), convert_date(end_date), coefficient)
+    entreprises[entreprise_id].employees[employee_id].add_part_time(convert_date(start_date), convert_date(end_date), float(coefficient))
 
 #Fonction qui récupère les informations d'un employé
 def get_employees(line, entreprise_id):
@@ -78,7 +82,8 @@ def parse(file_name):
             entreprises[entreprise_id] = Entreprise(string.split(",")[1].strip())
         if (entreprise_id > 0) :
             employee_id = get_entreprise_info(line, entreprise_id, employee_id)
-    return file.content
+    calc_coef_entreprise()
+    return entreprises
 
 #Fonction qui affiche toutes les entreprises et leurs informations
 def print_entreprises():
@@ -87,7 +92,8 @@ def print_entreprises():
         print("nb employés : ", len(entreprises[entreprise].employees))
         for employee in entreprises[entreprise].employees:
             print('\t', employee, ' : ', entreprises[entreprise].employees[employee].name)
-            print('\t', entreprises[entreprise].employees[employee].birtday, ' | ', entreprises[entreprise].employees[employee].entry_date, ' | ', entreprises[entreprise].employees[employee].end_date)
+            print('\t', entreprises[entreprise].employees[employee].birtday, ' | ', entreprises[entreprise].employees[employee].entry_date, \
+                ' | ', entreprises[entreprise].employees[employee].end_date)
             for part_time in entreprises[entreprise].employees[employee].part_time:
                 print('\t\t', part_time.start_date, ' | ', part_time.end_date, ' | ', part_time.coefficient)
 
@@ -109,3 +115,13 @@ def print_entreprise_info(entreprise_id):
             print('\t\tend_date : ', part_time.end_date)
             print('\t\tcoefficient :', part_time.coefficient)
             print('\t\t', '-' * 20)
+        print("\t12 last coefficients of ", entreprises[entreprise_id].employees[employee].name,": ", entreprises[entreprise_id].employees[employee].list_coefficients)
+
+def calc_coef_entreprise():
+    for entreprise in entreprises:
+        for employee in entreprises[entreprise].employees:
+            periodes_temps_partiel = []
+            for part_time in entreprises[entreprise].employees[employee].part_time:
+                periodes_temps_partiel.append((part_time.start_date, part_time.end_date, part_time.coefficient))
+            entreprises[entreprise].employees[employee].add_coefficients(coefficients_equivalent_temps_plein(periodes_temps_partiel, \
+                entreprises[entreprise].employees[employee].entry_date, entreprises[entreprise].employees[employee].end_date, date.today()))

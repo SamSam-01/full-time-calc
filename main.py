@@ -16,7 +16,7 @@ def main():
         coefficients = coefficients_equivalent_temps_plein(periodes_temps_partiel, date_entree, date_sortie, date_input)
         print(coefficients)
     else:
-        parse(argv[1])
+        entreprises = parse(argv[1])
         print_entreprise_info(1)
 
 if __name__ == "__main__":
